@@ -121,4 +121,5 @@ If you stuck with Kotlin-specific questions or anything related to this template
 [kotlin]: https://kotlinlang.org
 [slack]: https://surveys.jetbrains.com/s3/kotlin-slack-sign-up
 [file:cover]: .github/readme/cover.png
-[file:utils]: src/Utils.kt
+
+[file:utils]: src/main/Utils.kt
