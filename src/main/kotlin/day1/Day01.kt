@@ -2,7 +2,7 @@ package day1
 
 import readInput
 
-val input = readInput("1").map { it.toInt() }
+private val input = readInput("1").map { it.toInt() }
 
 
 fun main() {
