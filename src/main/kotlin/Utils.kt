@@ -12,7 +12,7 @@ private val client = HttpClient.newHttpClient();
 private val cookie = readResource("cookie")
 
 
-fun readInput(day: String): List<String> {
+fun readUrlInput(day: String): List<String> {
     val request = HttpRequest.newBuilder(URI.create("https://adventofcode.com/2021/day/$day/input"))
         .GET()
         .header("cookie", cookie)
@@ -21,6 +21,10 @@ fun readInput(day: String): List<String> {
         .body()
         .toList();
 
+}
+
+fun readLocalInput(name: String): List<String> {
+    return readResource(name)?.lines() ?: throw RuntimeException("Could not read $name")
 }
 
 private fun readResource(name: String) = object {}.javaClass.getResource("./$name")

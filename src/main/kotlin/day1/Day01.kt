@@ -1,8 +1,8 @@
 package day1
 
-import readInput
+import readUrlInput
 
-private val input = readInput("1").map { it.toInt() }
+private val input = readUrlInput("1").map { it.toInt() }
 
 
 fun main() {

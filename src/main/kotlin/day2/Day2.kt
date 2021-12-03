@@ -1,9 +1,9 @@
 package day2
 
-import readInput
+import readUrlInput
 
 
-private val input = readInput("2")
+private val input = readUrlInput("2")
 
 fun main() {
     println(part1())
