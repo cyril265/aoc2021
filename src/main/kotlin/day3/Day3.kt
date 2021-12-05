@@ -28,7 +28,7 @@ fun part1(): Int {
 private fun inverse(gammaBits: CharArray) = gammaBits.map { if (it == '0') '1' else '0' }.toCharArray()
 
 fun part2(): Int {
-    val n1 = filterReport(::determineMostCommon)
+    val n1 = filterReport(::mostCommon)
     val n2 = filterReport(::leastCommon)
 
     return toInt(n1) * toInt(n2)
@@ -54,8 +54,8 @@ private fun filterReport(decider: KFunction2<List<Char>, Char, Boolean>): CharAr
     return result[0]
 }
 
-private fun determineMostCommon(column: List<Char>, bit: Char) = column.count { it == bit } >= column.size / 2.0
-private fun leastCommon(column: List<Char>, bit: Char) = !determineMostCommon(column, bit)
+private fun mostCommon(column: List<Char>, bit: Char) = column.count { it == bit } >= column.size / 2.0
+private fun leastCommon(column: List<Char>, bit: Char) = !mostCommon(column, bit)
 
 
 private fun filterNumber(
