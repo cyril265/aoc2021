@@ -1,9 +1,9 @@
 package day3
 
-import readLocalInput
+import readToList
 import kotlin.reflect.KFunction2
 
-private val input = readLocalInput("day3.txt")
+private val input = readToList("day3.txt")
     .map { it.toCharArray() }.toTypedArray()
 
 fun main() {
@@ -31,10 +31,10 @@ fun part2(): Int {
     val n1 = filterReport(::mostCommon)
     val n2 = filterReport(::leastCommon)
 
-    return toInt(n1) * toInt(n2)
+    return n1 * n2
 }
 
-private fun filterReport(decider: KFunction2<List<Char>, Char, Boolean>): CharArray {
+private fun filterReport(decider: KFunction2<List<Char>, Char, Boolean>): Int {
     var result = input
     var index = 0
 
@@ -49,7 +49,7 @@ private fun filterReport(decider: KFunction2<List<Char>, Char, Boolean>): CharAr
         index++
     }
 
-    return result[0]
+    return toInt(result[0])
 }
 
 private fun mostCommon(column: List<Char>, bit: Char) = column.count { it == bit } >= column.size / 2.0

@@ -8,9 +8,14 @@ import java.security.MessageDigest
 private val cookie = readResource("cookie")
 
 
-fun readLocalInput(name: String): List<String> {
-    return readResource(name)?.lines() ?: throw RuntimeException("Could not read $name")
+fun readToList(name: String): List<String> {
+    return read(name).lines()
 }
+
+fun read(name: String): String {
+    return readResource(name) ?: throw RuntimeException("Could not read $name")
+}
+
 
 private fun readResource(name: String) = object {}.javaClass.getResource("./$name")
     ?.readText()

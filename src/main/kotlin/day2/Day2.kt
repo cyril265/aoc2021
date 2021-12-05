@@ -1,9 +1,9 @@
 package day2
 
-import readLocalInput
+import readToList
 
 
-private val input = readLocalInput("day2")
+private val input = readToList("day2")
 
 fun main() {
     println(part1())
