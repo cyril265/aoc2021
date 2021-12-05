@@ -4,21 +4,17 @@ import read
 import readToList
 
 
+val input = readToList("day4_input.txt").first().split(',')
+val boardLines = read("day4_board.txt").split("\r\n\r\n")
+
+
 fun main() {
-    println(part1())
+    println(play(input, true))
+    println(play(input, false))
 }
 
-private fun part1(): Int {
-    val input = readToList("day4_input.txt").first().split(',')
-    val boardLines = read("day4_board.txt").split("\r\n\r\n")
-
-    val boards = boardLines
-        .map { line ->
-            line.split("\r\n")
-                .filter { it.isNotBlank() }
-                .map { it.split(' ').filter { it.isNotBlank() }.map(::Cell) }
-        }
-        .map(::Board)
+private fun play(input: List<String>, matchFirst: Boolean): Int {
+    val boards = toBoards()
 
     input.forEach { number ->
         boards.forEach { board ->
@@ -29,21 +25,35 @@ private fun part1(): Int {
                     }
                 }
             }
-            if (board.matches()) {
-                val sum = board.board.sumOf { x -> x.filter { !it.matched }.sumOf { it.value.toInt() } }
-                return@part1 sum * number.toInt()
+            if (matchFirst && board.matches() || boards.all { it.matches() }) {
+                return@play board.sumUnmatched() * number.toInt()
             }
         }
     }
-    return 0
+    throw RuntimeException("Invalid solution")
 }
+
+private fun toBoards(): List<Board> {
+    val boards = boardLines
+        .map { line ->
+            line.split("\r\n")
+                .map { it.split(' ').filter { it.isNotBlank() }.map(::Cell) }
+        }
+        .map(::Board)
+    return boards
+}
+
 
 data class Cell(val value: String, var matched: Boolean = false)
 data class Board(val board: List<List<Cell>>) {
 
     fun matches(): Boolean {
         return board.any { line -> line.all { it.matched } } ||
-            transpose(board).any { line -> line.all { it.matched } }
+                transpose(board).any { line -> line.all { it.matched } }
+    }
+
+    fun sumUnmatched(): Int {
+        return board.sumOf { x -> x.filter { !it.matched }.sumOf { it.value.toInt() } }
     }
 
 }
