@@ -3,15 +3,13 @@ package day4
 import read
 import readToList
 
-val x = readToList("day4_input.txt")
-
 
 fun main() {
     println(part1())
 }
 
 private fun part1(): Int {
-    val input = x.first().split(',')
+    val input = readToList("day4_input.txt").first().split(',')
     val boardLines = read("day4_board.txt").split("\r\n\r\n")
 
     val boards = boardLines
