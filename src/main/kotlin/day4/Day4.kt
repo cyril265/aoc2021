@@ -59,7 +59,7 @@ data class Board(val board: List<List<Cell>>) {
 }
 
 private fun transpose(source: List<List<Cell>>) =
-    (source.first().indices).asSequence().map { i ->
+    (source.first().indices).map { i ->
         (source.indices).map { j ->
             source[j][i]
         }
