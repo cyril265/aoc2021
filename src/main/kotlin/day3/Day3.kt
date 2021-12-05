@@ -35,19 +35,17 @@ fun part2(): Int {
 }
 
 private fun filterReport(decider: KFunction2<List<Char>, Char, Boolean>): CharArray {
-    var transposed = transpose(input)
     var result = input
     var index = 0
 
     while (result.size != 1) {
+        val transposed = transpose(result)
         val column = transposed[index]
         result = if (decider(column, '1')) {
             filterNumber(result, index, '1')
         } else {
             filterNumber(result, index, '0')
         }
-        transposed = transpose(result)
-
         index++
     }
 
