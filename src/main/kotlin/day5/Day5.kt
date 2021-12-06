@@ -11,11 +11,11 @@ fun main() {
     }.filter { line -> line.isHorizontal() || line.isVertical() }
 
     val resultPoints = lines.flatMap { line -> line.producePoints() }
-    val flatten = resultPoints
+    val groupedByPoints = resultPoints
         .groupingBy { it }
         .eachCount()
 
-    println(flatten.values.count { it >= 2 })
+    println(groupedByPoints.values.count { it >= 2 })
 }
 
 private fun toPoint(first: String): Point {
