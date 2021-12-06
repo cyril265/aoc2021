@@ -8,7 +8,7 @@ fun main() {
     val lines = input.map { line ->
         val (first, second) = line.split(" -> ")
         Line(toPoint(first), toPoint(second))
-    }.filter { line -> line.isHorizontal() || line.isVertical() }
+    }
 
     val resultPoints = lines.flatMap { line -> line.producePoints() }
     val groupedByPoints = resultPoints
@@ -32,9 +32,11 @@ data class Line(val a: Point, val b: Point) {
         return if (isHorizontal()) {
             val range = if (a.y < b.x) a.y..b.y else b.y..a.y
             range.map { Point(a.x, it) }
-        } else {
+        } else if (isVertical()) {
             val range = if (a.x < b.x) a.x..b.x else b.x..a.x
             range.map { Point(it, a.y) }
+        } else {
+            emptyList()
         }
     }
 
