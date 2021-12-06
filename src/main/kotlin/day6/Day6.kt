@@ -13,21 +13,19 @@ fun main() {
 }
 
 private fun fishIt(days: Int): Long {
-    val fishArray = LongArray(7)
+    val fishArray = LongArray(9)
     input.forEach {
         fishArray[it]++
     }
-    val newFishArray = LongArray(9)
 
     (1..days).forEach { _ ->
-        val first = tick(fishArray)
-        val second = tick(newFishArray)
+        val tickResult = tick(fishArray)
 
-        fishArray[6] = first.resetFishCount + second.resetFishCount
-        newFishArray[8] = first.resetNewFishCount + second.resetNewFishCount
+        fishArray[6] += tickResult.resetFishCount
+        fishArray[8] += tickResult.resetNewFishCount
     }
 
-    return fishArray.sum() + newFishArray.sum()
+    return fishArray.sum()
 }
 
 fun tick(fishArray: LongArray): TickResult {
