@@ -10,12 +10,12 @@ fun main() {
         Line(toPoint(first), toPoint(second))
     }.filter { line -> line.isHorizontal() || line.isVertical() }
 
-    val result = Array(10) { IntArray(10) }
-    val resultPoints = lines.map { line -> line.producePoints() }
-    resultPoints.flatten()
-        .forEach { point -> result[point.x][point.y] = 1}
-    println(resultPoints)
+    val resultPoints = lines.flatMap { line -> line.producePoints() }
+    val flatten = resultPoints
+        .groupingBy { it }
+        .eachCount()
 
+    println(flatten.values.count { it >= 2 })
 }
 
 private fun toPoint(first: String): Point {
@@ -30,9 +30,11 @@ data class Line(val a: Point, val b: Point) {
 
     fun producePoints(): List<Point> {
         return if (isHorizontal()) {
-            (a.y..b.y).map { Point(a.x, it) }
+            val range = if (a.y < b.x) a.y..b.y else b.y..a.y
+            range.map { Point(a.x, it) }
         } else {
-            (a.x..b.x).map { Point(it, a.y) }
+            val range = if (a.x < b.x) a.x..b.x else b.x..a.x
+            range.map { Point(it, a.y) }
         }
     }
 
