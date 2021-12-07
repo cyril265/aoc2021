@@ -30,9 +30,12 @@ private fun part2(): Int {
 
     return (minPosition..maxPosition)
         .minOf { possiblePosition ->
-            input.sumOf { crabPosition -> gaussSum(abs(crabPosition - possiblePosition)) }
+            input.sumOf { crabPosition -> distanceBetween(crabPosition, possiblePosition) }
         }
 }
+
+private fun distanceBetween(crabPosition: Int, possiblePosition: Int) =
+    gaussSum(abs(crabPosition - possiblePosition))
 
 private fun gaussSum(n: Int) = (n * n + n) / 2
 
