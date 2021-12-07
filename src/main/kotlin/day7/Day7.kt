@@ -25,13 +25,7 @@ private fun part1(): Int {
 }
 
 private fun part2(): Int {
-    val minPosition = input.minOf { it }
-    val maxPosition = input.maxOf { it }
-
-    return (minPosition..maxPosition)
-        .minOf { possiblePosition ->
-            input.sumOf { crabPosition -> distanceBetween(crabPosition, possiblePosition) }
-        }
+    return (input.minOf { it }..input.maxOf { it }).minOf { possiblePosition -> input.sumOf { crabPosition -> distanceBetween(crabPosition, possiblePosition) } }
 }
 
 private fun distanceBetween(crabPosition: Int, possiblePosition: Int) =
