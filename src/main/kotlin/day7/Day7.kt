@@ -12,11 +12,6 @@ fun main() {
     println(part2())
 }
 
-
-private fun gaussSum(n: Int): Int {
-    return (n * n + n) / 2
-}
-
 private fun part1(): Int {
     val sorted = input.sorted()
     val size = sorted.size
@@ -30,20 +25,14 @@ private fun part1(): Int {
 }
 
 private fun part2(): Int {
-    val min = input.minOf { it }
-    val max = input.maxOf { it }
+    val minPosition = input.minOf { it }
+    val maxPosition = input.maxOf { it }
 
-    val possibleCosts = ArrayList<List<Int>>()
-
-    (min..max).forEach { position ->
-        val gauss = mutableListOf<Int>()
-        possibleCosts.add(gauss)
-
-        input.forEach { crabPosition ->
-            gauss.add(gaussSum(abs(crabPosition - position)))
-
+    return (minPosition..maxPosition)
+        .minOf { possiblePosition ->
+            input.sumOf { crabPosition -> gaussSum(abs(crabPosition - possiblePosition)) }
         }
-    }
-
-    return possibleCosts.minOf { positionCosts -> positionCosts.sum() }
 }
+
+private fun gaussSum(n: Int) = (n * n + n) / 2
+
