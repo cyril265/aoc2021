@@ -1,9 +1,6 @@
 package day5
 
-import jdk.nashorn.internal.objects.NativeMath.abs
 import readToList
-import kotlin.math.abs
-import kotlin.math.max
 
 val input = readToList("day5.txt")
 
@@ -62,7 +59,7 @@ data class Line(val a: Point, val b: Point) {
             val range = if (a.x < b.x) a.x..b.x else b.x..a.x
             range.map { Point(it, a.y) }
         } else {
-            val range = if( a.x < b.x ) a.x..b.x else b.x..a.x
+            val range = if (a.x < b.x) a.x..b.x else b.x..a.x
             val pts = range.map { Point(it, it) }
             pts
         }
