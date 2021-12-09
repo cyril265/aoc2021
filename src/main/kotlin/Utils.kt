@@ -1,5 +1,4 @@
 import java.math.BigInteger
-import java.net.URI
 import java.security.MessageDigest
 
 /**
@@ -25,3 +24,11 @@ private fun readResource(name: String) = object {}.javaClass.getResource("./$nam
  * Converts string to md5 hash.
  */
 fun String.md5(): String = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteArray())).toString(16)
+
+fun <T> transpose(source: Collection<Collection<T>>): List<List<T>> {
+    return (source.first().indices).map { i ->
+        (source.indices).map { j ->
+            source.elementAt(j).elementAt(i)
+        }
+    }
+}
