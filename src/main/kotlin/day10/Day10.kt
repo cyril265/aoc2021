@@ -24,7 +24,7 @@ private fun part2(): Long {
             val stack = Stack<Char>()
 
             for (char in line) {
-                if (isOpen(char)) {
+                if (isOpenBracket(char)) {
                     stack.push(char)
                 } else {
                     stack.pop()
@@ -49,7 +49,7 @@ private fun calcInvalidLinePoints(line: CharArray): Int {
     var points = 0
     val stack = Stack<Char>()
     for (char in line) {
-        if (isOpen(char)) {
+        if (isOpenBracket(char)) {
             stack.push(char)
         } else {
             val openBracket = stack.pop()
@@ -64,7 +64,7 @@ private fun calcInvalidLinePoints(line: CharArray): Int {
 }
 
 
-private fun isOpen(c: Char) = arrayOf('{', '(', '[', '<').contains(c)
+private fun isOpenBracket(c: Char) = arrayOf('{', '(', '[', '<').contains(c)
 
 private val openToCloseMap = mapOf(
     '{' to '}',
@@ -86,7 +86,6 @@ private val p2ScoreMap = mapOf(
     '}' to 3,
     '>' to 4
 )
-
 
 private fun calculateMedian(scores: List<Long>): Long {
     val size = scores.size
