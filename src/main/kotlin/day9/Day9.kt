@@ -17,15 +17,15 @@ fun main() {
     val part2 = part2(p2Input)
     println(part2)
 
-    val message = p2Input.map { line -> line.map { if (it.lowest) it.height.toString() else "0" } }
-    println(message.joinToString(separator = "\n"))
+//    val message = p2Input.map { line -> line.map { if (it.lowest) it.height.toString() else "0" } }
+//    println(message.joinToString(separator = "\n"))
 }
 
 private fun part2(input: List<List<Height>>): Long {
     val basins = mutableListOf<Int>()
     for ((listIndex, line) in input.withIndex()) {
         for ((index, height) in line.withIndex()) {
-            if (height.lowest) continue
+            if (height.lowest || !height.valid) continue
             val size = setLowest(index, input, listIndex)
             if (size > 0) {
                 basins.add(size)
@@ -63,11 +63,11 @@ private fun setLowest(
     var basinSize = 0
     if (lowest) {
         currentItem.lowest = true
+        basinSize += 1
         basinSize += setLowest(columnIndex - 1, heightMatrix, lineIndex)
         basinSize += setLowest(columnIndex + 1, heightMatrix, lineIndex)
         basinSize += setLowest(columnIndex, heightMatrix, lineIndex - 1)
         basinSize += setLowest(columnIndex, heightMatrix, lineIndex + 1)
-        basinSize += 1
     }
     return basinSize
 }
