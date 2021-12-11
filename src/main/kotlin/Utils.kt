@@ -1,5 +1,6 @@
 import java.math.BigInteger
 import java.security.MessageDigest
+import kotlin.streams.toList
 
 /**
  * Reads lines from the given input txt file.
@@ -9,6 +10,14 @@ private val cookie = readResource("cookie")
 
 fun readToList(name: String): List<String> {
     return read(name).lines()
+}
+
+fun readToMatrix(name: String): List<MutableList<Int>> {
+    return read(name)
+        .lines()
+        .map { line ->
+            line.chars().map { char -> Character.getNumericValue(char) }.toList().toMutableList()
+        }.toList()
 }
 
 fun read(name: String): String {

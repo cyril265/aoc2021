@@ -1,7 +1,7 @@
 package day10
 
 import readToList
-import java.util.Stack
+import java.util.*
 
 private val input = readToList("day10.txt")
     .map { it.toCharArray() }
@@ -40,7 +40,6 @@ private fun part2(): Long {
                 scores.add(lineScore)
             }
         }
-    scores.sort()
 
     return calculateMedian(scores)
 }
@@ -64,7 +63,7 @@ private fun calcInvalidLinePoints(line: CharArray): Int {
 }
 
 
-private fun isOpenBracket(c: Char) = arrayOf('{', '(', '[', '<').contains(c)
+private fun isOpenBracket(c: Char) = openToCloseMap.keys.contains(c)
 
 private val openToCloseMap = mapOf(
     '{' to '}',
@@ -88,11 +87,12 @@ private val p2ScoreMap = mapOf(
 )
 
 private fun calculateMedian(scores: List<Long>): Long {
-    val size = scores.size
+    val sorted = scores.sorted()
+    val size = sorted.size
     val median = if (size % 2 == 0) {
-        (scores[size / 2] + scores[size / 2 - 1]) / 2.0
+        (sorted[size / 2] + sorted[size / 2 - 1]) / 2.0
     } else {
-        scores[size / 2].toDouble()
+        sorted[size / 2].toDouble()
     }.toLong()
     return median
 }
