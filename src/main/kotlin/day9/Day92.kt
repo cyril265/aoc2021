@@ -40,9 +40,9 @@ private data class HeightMatrix(val matrix: List<List<Height>>) {
 
     fun setLowPoints() {
         for (row in matrix) {
-            for (height in row) {
-                if (getAdjacent(height).all { height.height < it.height }) {
-                    height.lowest = true
+            for (current in row) {
+                if (getAdjacent(current).all { current.height < it.height }) {
+                    current.lowest = true
                 }
             }
         }
