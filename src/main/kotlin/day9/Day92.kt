@@ -26,7 +26,7 @@ private fun part2(): Int {
         .flatten()
         .filter { it.lowest }
         .map { lowPoint ->
-            heightMatrix.search(lowPoint)
+            heightMatrix.findBasin(lowPoint)
         }
 
     val (a, b, c) = basins.sortedDescending()
@@ -48,7 +48,7 @@ private data class HeightMatrix(val matrix: List<List<Height>>) {
         }
     }
 
-    fun search(lowPoint: Height): Int {
+    fun findBasin(lowPoint: Height): Int {
         val adjacent = getAdjacent(lowPoint).filter { !it.basinPart && it.valid }
         var basinSize = 0
 
@@ -59,7 +59,7 @@ private data class HeightMatrix(val matrix: List<List<Height>>) {
 
         basinSize += adjacent
             .filter { lowPoint.height <= it.height }
-            .sumOf { search(it) }
+            .sumOf { findBasin(it) }
         return basinSize
     }
 
