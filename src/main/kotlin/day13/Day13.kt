@@ -49,8 +49,6 @@ private fun mapInput(): Pair<List<FoldInstruction>, List<Dot>> {
         val coordinateType = if (coordinate == "x") CoordinateType.X else CoordinateType.Y
         FoldInstruction(value.toInt(), coordinateType)
     }
-
-
     val dots = dotsPlain.map {
         val (x, y) = it.split(",")
         Dot(x.toInt(), y.toInt())
