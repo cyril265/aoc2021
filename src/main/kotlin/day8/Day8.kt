@@ -6,11 +6,11 @@ private val input = readToList("day8.txt")
 
 fun main() {
     val validDigits = input.map { line ->
-        val (inputStr, digitStr) = line.split(" | ")
-        val inputs = inputStr.split(" ").map { Digit(it) }.filter { validLengths.contains(it.sorted.size) }.toSet()
+        val (signalStr, digitStr) = line.split(" | ")
+        val signals = signalStr.split(" ").map { Digit(it) }.filter { validLengths.contains(it.sorted.size) }.toSet()
         val digits = digitStr.split(" ").map { Digit(it) }
 
-        digits.filter { inputs.contains(it) }
+        digits.filter { signals.contains(it) }
     }
 
     println(validDigits.sumOf { it.size })

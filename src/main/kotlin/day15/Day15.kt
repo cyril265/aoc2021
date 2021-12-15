@@ -1,6 +1,7 @@
 package day15
 
 import readToList
+import java.util.*
 
 private val input = readToList("day15.txt")
 
@@ -11,58 +12,56 @@ fun main() {
         }.toArray()
     }.toTypedArray()
 
-    val graph = Graph(weightMatrix)
-    println(graph)
 
+    val distance = dijkstra(weightMatrix)
+    println(distance[weightMatrix.size - 1][weightMatrix[0].size - 1])
 }
 
+fun dijkstra(graph: Array<IntArray>): Array<IntArray> {
+    val dist = Array(graph.size) { _ -> IntArray(graph[0].size) { Int.MAX_VALUE } }
+    dist[0][0] = 0
 
-data class Graph(val matrix: Array<IntArray>) {
+    val vis = Array(graph.size) { _ -> BooleanArray(graph[0].size) }
+    val pq = PriorityQueue(Comparator.comparing(NodeDistance::dist))
+    pq.add(NodeDistance(Node(0, 0, 0), 0))
 
-    val visitedMatrix: Array<BooleanArray> = Array(matrix.size) { _ -> BooleanArray(matrix[0].size) }
+    while (pq.isNotEmpty()) {
+        val (index, minValue) = pq.poll()
+        vis[index.i][index.j] = true
+        if (dist[index.i][index.j] < minValue) continue
 
-    init {
-        visitedMatrix[0][0] = true
-    }
+        for (edge in adjacent(graph, index.i, index.j)) {
+            if (vis[edge.i][edge.j]) continue;
 
-    fun adjacent(rowIndex: Int, columnIndex: Int): List<Int> {
-        return listOfNotNull(
-            get(rowIndex + 1, columnIndex),
-            get(rowIndex - 1, columnIndex),
-            get(rowIndex, columnIndex + 1),
-            get(rowIndex, columnIndex - 1),
-        )
-    }
-
-    fun get(rowIndex: Int, columnIndex: Int): Int? {
-        if (rowIndex < matrix.size) {
-            val row = matrix[rowIndex]
-            if (columnIndex < row.size) {
-                return row[columnIndex]
-            }
-        }
-        return null
-    }
-
-    private fun doIt() {
-        var shortestDistance = Int.MAX_VALUE
-        var shortIndex = -1
-        for ((rowIndex, row) in matrix.withIndex()) {
-            for ((columnIndex, weight) in row.withIndex()) {
-                shortest()
+            val newDist = dist[index.i][index.j] + edge.cost
+            if (newDist < dist[edge.i][edge.j]) {
+                dist[edge.i][edge.j] = newDist
+                pq.add(NodeDistance(edge, newDist))
             }
         }
     }
 
-    private fun shortest() {
-
-    }
-
-
+    return dist
 }
 
-class Vertex(
-    val weight: Int,
-    val adjacent: Array<Vertex>,
-    val visited: Boolean = false
-)
+private data class NodeDistance(val node: Node, val dist: Int)
+private data class Node(val i: Int, val j: Int, val cost: Int)
+
+private fun adjacent(matrix: Array<IntArray>, rowIndex: Int, columnIndex: Int): List<Node> {
+    return listOfNotNull(
+        get(matrix, rowIndex + 1, columnIndex),
+        get(matrix, rowIndex - 1, columnIndex),
+        get(matrix, rowIndex, columnIndex + 1),
+        get(matrix, rowIndex, columnIndex - 1),
+    )
+}
+
+private fun get(matrix: Array<IntArray>, rowIndex: Int, columnIndex: Int): Node? {
+    if (rowIndex >= 0 && rowIndex < matrix.size) {
+        val row = matrix[rowIndex]
+        if (columnIndex >= 0 && columnIndex < row.size) {
+            return Node(rowIndex, columnIndex, row[columnIndex])
+        }
+    }
+    return null
+}
