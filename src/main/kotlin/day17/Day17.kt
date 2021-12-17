@@ -9,8 +9,7 @@ fun main() {
 
     for (x in -1000..1000) {
         for (y in -1000..1000) {
-            val velocity = Velocity(Point(x, y))
-            val maxY = findMax(velocity)
+            val maxY = findMaxY(Velocity(Point(x, y)))
             if (maxY != null) {
                 if (maxY > globalMax) globalMax = maxY
                 count++
@@ -20,23 +19,21 @@ fun main() {
 
     println("p1 $globalMax")
     println("p2 $count")
-
 }
 
 
-private fun findMax(velocity: Velocity): Int? {
+private fun findMaxY(velocity: Velocity): Int? {
     var position = Point(0, 0)
-    var maxY1 = 0
+    var maxY = 0
     for (step in 1..500) {
         position = Point(position.x + velocity.point.x, position.y + velocity.point.y)
 
-        if (position.y > maxY1) maxY1 = position.y
+        if (position.y > maxY) maxY = position.y
 
         if (target.contains(position)) {
-            return maxY1
-        } else {
-            velocity.step()
+            return maxY
         }
+        velocity.step()
     }
     return null
 }
@@ -53,14 +50,11 @@ private data class Velocity(val point: Point) {
 
     fun step() {
         val (x, y) = point
-        val newX = when {
+        this.point.x = when {
             x > 0 -> x - 1
             x < 0 -> x + 1
             else -> 0
         }
-        val newY = y - 1
-        this.point.x = newX
-        this.point.y = newY
+        this.point.y = y - 1
     }
-
 }
