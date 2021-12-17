@@ -5,20 +5,20 @@ private val target = Area(60..94, -171..-136)
 
 fun main() {
     var globalMax = 0
-    var count = 0
+    var velocitiesCount = 0
 
     for (x in -1000..1000) {
         for (y in -1000..1000) {
             val maxY = findMaxY(Velocity(Point(x, y)))
             if (maxY != null) {
                 if (maxY > globalMax) globalMax = maxY
-                count++
+                velocitiesCount++
             }
         }
     }
 
     println("p1 $globalMax")
-    println("p2 $count")
+    println("p2 $velocitiesCount")
 }
 
 

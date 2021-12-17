@@ -11,23 +11,21 @@ fun main() {
     }.flatMap { it.toList() }.toMutableList()
 
 
-    println(map.toCharArray().concatToString())
-
-    val packets = getPacket(map)
-    println(packets.sumOf { it.version })
-
-    val stack = Stack<Node>()
-    packets.reversed().forEach { packet ->
-        if (packet.operation != null) {
-            val leafs = stack.takeWhile { it.current.operation == null }
-            stack.push(Node(packet, leafs))
-            stack.consume(leafs.count().toLong())
-        } else {
-            stack.push(Node(packet))
-        }
-    }
-    val message = evaluate(stack.first())
-    println(message)
+    val packets = getPacket(map, null)
+    println(packets)
+//    println(packets.sumOf { it.version })
+//
+//    val stack = Stack<Node>()
+//    packets.reversed().forEach { packet ->
+//        if (packet.operation != null) {
+//            val leaves = stack.popWhile { it.current.depth - 1 == packet.depth }
+//            stack.push(Node(packet, leaves))
+//        } else {
+//            stack.push(Node(packet))
+//        }
+//    }
+//    val message = evaluate(stack.first())
+//    println(message)
 }
 
 
@@ -49,46 +47,104 @@ private data class Node(val current: Packet, val children: List<Node> = emptyLis
 
     override fun toString(): String {
         if (current.operation != null) {
-            return "operation=${current.operation}, children=$children"
+            return "operation=${current.operation}, children=$children, children=${
+                current.children.filterNotNull().map { it.operation ?: it.numericValue }
+            }"
         } else {
-            return "numeric=${current.numericValue}, children=$children"
+            return "numeric=${current.numericValue}, children=$children, children=${
+                current.children.filterNotNull().map { it.operation ?: it.numericValue }
+            }"
         }
     }
-
 
 }
 
 
-private fun getPacket(bits: MutableList<Char>): List<Packet> {
+private fun getPacket(bits: MutableList<Char>, limit: Long? = null): List<Packet> {
     if (bits.all { it == '0' }) return emptyList()
 
-    val version = toLong(bits.consume(3))
-    val typeId = toLong(bits.consume(3))
+    val (version, typeId) = getVersionType(bits)
+    val opi = Operation.create(typeId)
+
+    val result = mutableListOf<Packet>()
+
+    while (bits.isNotEmpty()) {
+        val packetSimple = getPacketSimple(bits) ?: break
+        result.add(packetSimple)
+        if (packetSimple.numberOfPackets != null) {
+            packetSimple.children += (1..packetSimple.numberOfPackets).map { getPacketSimple(bits) }
+        }
+    }
+    return result
+//    if (typeId == 4L) {
+//        return if (limit != null) {
+//            (0 until limit).map { Packet(version, typeId, mapNumber(bits)) }
+//        } else {
+//            listOf(Packet(version, typeId, mapNumber(bits))) + getPacket(bits, null)
+//        }
+//    } else {
+//        val (lengthType) = bits.consume(1)
+//
+//        if (lengthType == '0') {
+//            val totalLengthBits = bits.consume(15)
+//            val totalLength = toLong(totalLengthBits)
+//
+//            val newParent = Packet(version, typeId, totalLengthBits)
+//            println(newParent.operation)
+//
+//            if (limit != null) {
+//                newParent.children += getPacket(bits.consume(totalLength))
+//                val newLimit = limit - 1
+//                newParent.children += (0 until newLimit).flatMap { getPacket(bits) }
+//            } else {
+//                newParent.children += getPacket(bits.consume(totalLength))
+//                newParent.children += getPacket(bits)
+//            }
+//
+//            return listOf(newParent)
+//        } else {
+//            val content = bits.consume(11)
+//            val numberOfPackets = toLong(content)
+//            val newParent = Packet(version, typeId, content)
+//            println(newParent.operation)
+//            newParent.children += newParent
+//            newParent.children += getPacket(bits, numberOfPackets)
+//            return listOf(newParent)
+//        }
+//    }
+
+}
+
+private fun getPacketSimple(bits: MutableList<Char>): Packet? {
+    if (bits.all { it == '0' }) return null
+
+    val (version, typeId) = getVersionType(bits)
+    val opi = Operation.create(typeId)
+
     if (typeId == 4L) {
-        val container = mutableListOf(Packet(version, typeId, mapNumber(bits)))
-        container += getPacket(bits)
-        return container
+        Packet(version, typeId, mapNumber(bits))
     } else {
         val (lengthType) = bits.consume(1)
+
         if (lengthType == '0') {
             val totalLengthBits = bits.consume(15)
             val totalLength = toLong(totalLengthBits)
 
-            val container = mutableListOf<Packet>()
-            container += Packet(version, typeId, totalLengthBits)
-            container += getPacket(bits.consume(totalLength))
-            container += getPacket(bits)
-            return container
+            return Packet(version, typeId, totalLengthBits)
         } else {
             val content = bits.consume(11)
             val numberOfPackets = toLong(content)
-            val resultContainer = mutableListOf<Packet>()
-            resultContainer += Packet(version, typeId, content)
-            resultContainer += getPacket(bits).toMutableList()
-            return resultContainer
+            return Packet(version, typeId, content, numberOfPackets)
         }
     }
+    return null
 
+}
+
+private fun getVersionType(bits: MutableList<Char>): Pair<Long, Long> {
+    val version = toLong(bits.consume(3))
+    val typeId = toLong(bits.consume(3))
+    return Pair(version, typeId)
 }
 
 private fun mapNumber(
@@ -103,9 +159,22 @@ private fun mapNumber(
     return result
 }
 
-private class Packet(val version: Long, val typeId: Long, content: MutableList<Char>) {
+private class Packet(
+    val version: Long,
+    typeId: Long,
+    content: MutableList<Char>,
+    val numberOfPackets: Long? = null
+) {
+
+    var children: MutableList<Packet?> = mutableListOf()
     val operation = Operation.create(typeId)
     val numericValue = toLong(content)
+    override fun toString(): String {
+        return "Packet(operation=$operation, numericValue=$numericValue, children=${
+            children.filterNotNull().map { it.operation ?: it.numericValue }
+        })"
+    }
+
 
 }
 
@@ -189,6 +258,22 @@ private fun toLong(bits: List<Char>): Long {
 
 private fun <T> MutableList<T>.consume(count: Long): MutableList<T> {
     return (0 until count).map { _ -> this.removeFirst() }.toMutableList()
+}
+
+private fun <T> Stack<T>.drain(): List<T> {
+    val result = mutableListOf<T>()
+    while (this.isNotEmpty()) {
+        result.add(this.pop())
+    }
+    return result
+}
+
+private fun <T> Stack<T>.popWhile(predicate: (T) -> Boolean): List<T> {
+    val result = mutableListOf<T>()
+    while (this.isNotEmpty() && predicate(this.peek())) {
+        result.add(this.pop())
+    }
+    return result
 }
 
 private fun toBits(char: Char) = when (char) {
