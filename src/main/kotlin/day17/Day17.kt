@@ -8,7 +8,7 @@ fun main() {
     var velocitiesCount = 0
 
     for (x in 0..100) {
-        for (y in -171..171) {
+        for (y in -200..200) {
             val maxY = findMaxY(Velocity(Point(x, y)))
             if (maxY != null) {
                 if (maxY > globalMax) globalMax = maxY
