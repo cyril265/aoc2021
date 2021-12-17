@@ -26,7 +26,7 @@ private fun findMaxY(velocity: Velocity): Int? {
     var position = Point(0, 0)
     var maxY = 0
     for (step in 1..500) {
-        position = Point(position.x + velocity.point.x, position.y + velocity.point.y)
+        position = position.move(velocity)
 
         if (position.y > maxY) maxY = position.y
 
@@ -44,7 +44,10 @@ private data class Area(val x: IntRange, val y: IntRange) {
 }
 
 
-private data class Point(var x: Int, var y: Int)
+private data class Point(var x: Int, var y: Int) {
+
+    fun move(velocity: Velocity) = Point(x + velocity.point.x, y + velocity.point.y)
+}
 
 private data class Velocity(val point: Point) {
 
