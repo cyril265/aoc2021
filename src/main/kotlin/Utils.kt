@@ -1,5 +1,6 @@
 import java.math.BigInteger
 import java.security.MessageDigest
+import java.util.*
 import kotlin.streams.toList
 
 /**
@@ -34,10 +35,12 @@ private fun readResource(name: String) = object {}.javaClass.getResource("./$nam
  */
 fun String.md5(): String = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteArray())).toString(16)
 
-fun <T> transpose(source: Collection<Collection<T>>): List<List<T>> {
-    return (source.first().indices).map { i ->
-        (source.indices).map { j ->
-            source.elementAt(j).elementAt(i)
-        }
-    }
+fun <T> Stack<T>.popUntil(predicate: (T) -> Boolean): List<T> {
+    val result = mutableListOf<T>()
+    do {
+        if (this.isEmpty()) return result
+        val el = this.pop()
+        result.add(el)
+    } while (predicate(el).not())
+    return result
 }
