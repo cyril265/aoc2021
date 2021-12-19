@@ -12,15 +12,15 @@ fun main() {
         val parsed = createPairExpression(line)
         current += parsed
     }
-    println("magnitude " + magnitude(current))
+    println("magnitude " + current.magnitude())
 
     var currentMax = 0L
     for (line1 in input) {
         for (line2 in input) {
             if (line1 === line2) continue
 
-            val pair = createPairExpression(line1) + createPairExpression(line2)
-            val magnitude = magnitude(pair)
+            val pairSum = createPairExpression(line1) + createPairExpression(line2)
+            val magnitude = pairSum.magnitude()
             if (magnitude > currentMax) currentMax = magnitude
         }
     }
@@ -31,7 +31,7 @@ fun main() {
 
 fun createPairExpression(input: String): CoolPair {
     val pair = parsePair(input)
-    reduce(pair)
+    pair.reduce()
     return pair
 }
 
@@ -50,7 +50,7 @@ fun parsePair(input: String): CoolPair {
                 stack.push(Comma)
             }
             else -> {
-                stack.push(Digit(Character.getNumericValue(char)))
+                stack.push(Digit.ofChar(char))
             }
 
         }
@@ -67,14 +67,17 @@ fun createNextPair(stack: Stack<Token>): CoolPair {
 
 
 sealed interface Token
+object OpenBracket : Token
+object Comma : Token
 interface PairComponent : Token
 
 data class Digit(var number: Int) : PairComponent {
+    companion object {
+        fun ofChar(char: Char) = Digit(Character.getNumericValue(char))
+    }
+
     override fun toString(): String {
         return number.toString()
     }
 }
-
-object OpenBracket : Token
-object Comma : Token
 

@@ -14,9 +14,9 @@ data class CoolPair(var left: PairComponent, var right: PairComponent) : PairCom
 
     fun explode(): Boolean {
         val digitList = digits()
-        val digit = digitList
+        val pairToExplode = digitList
             .firstOrNull { it.depth >= 4 }
-        val pairToExplode = digit?.parent
+            ?.parent
         if (pairToExplode != null) {
             val leftIndex = digitList.indexOfFirst { it.pair === pairToExplode.left }
             val leftDigit = digitList.getOrNull(leftIndex - 1)?.pair
@@ -49,9 +49,7 @@ data class CoolPair(var left: PairComponent, var right: PairComponent) : PairCom
 
             val parent = parentOf(this, digit)
             val newPair = CoolPair(Digit(left), Digit(right))
-            if (parent == null) {
-                throw RuntimeException("yikes")
-            }
+            checkNotNull(parent) { "Parent shall not be null" }
             if (parent.left === digit) {
                 parent.left = newPair
             } else if (parent.right === digit) {
@@ -66,13 +64,13 @@ data class CoolPair(var left: PairComponent, var right: PairComponent) : PairCom
         return "[$left, $right]"
     }
 
-    private fun digits(): List<PairDepth> {
-        return digits(this)
-    }
+    private fun digits() = digits(this)
+    fun magnitude() = magnitude(this)
+    fun reduce() = reduce(this)
 
 }
 
-fun reduce(pair: CoolPair) {
+private fun reduce(pair: CoolPair) {
     while (pair.explode() || pair.split()) {
     }
 }
@@ -89,7 +87,7 @@ private fun digits(el: PairComponent, depth: Int = -1, parent: PairComponent? = 
     }
 }
 
-fun magnitude(pair: CoolPair): Long {
+private fun magnitude(pair: CoolPair): Long {
     val left = pair.left
     val right = pair.right
     val leftResult = if (left is Digit) {
@@ -105,23 +103,21 @@ fun magnitude(pair: CoolPair): Long {
     return leftResult + rightResult
 }
 
-fun parentOf(current: CoolPair, el: PairComponent): CoolPair? {
+private fun parentOf(current: CoolPair, el: PairComponent): CoolPair? {
     if (current.left === el || current.right === el) return current
 
     if (current.right is CoolPair) {
-        val parentOf = parentOf(current.right as CoolPair, el)
-        if (parentOf != null) {
-            return parentOf
+        val parent = parentOf(current.right as CoolPair, el)
+        if (parent != null) {
+            return parent
         }
     }
-
     if (current.left is CoolPair) {
-        val parentOf = parentOf(current.left as CoolPair, el)
-        if (parentOf != null) {
-            return parentOf
+        val parent = parentOf(current.left as CoolPair, el)
+        if (parent != null) {
+            return parent
         }
     }
-
     return null
 }
 
